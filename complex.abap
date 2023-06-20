@@ -49,13 +49,13 @@ gs_employee-age = 32.
 INSERT gs_employee INTO gt_employee INDEX 2.
 
 
+"copy values with MOVE TO
 MOVE gs_employee-pernr TO gs_employee1-pernr.
 WRITE gs_employee1-pernr.
 
 WRITE: /, gs_employee1-pernr, gs_employee1-firstname, gs_employee1-name, gs_employee1-age.
 MOVE-CORRESPONDING gs_employee TO gs_employee1.
 WRITE: /, gs_employee1-pernr, gs_employee1-firstname, gs_employee1-name, gs_employee1-age.
-
 
 
 
