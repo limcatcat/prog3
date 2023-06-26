@@ -1,6 +1,7 @@
 How to create a Dynpro:
 (1) Create a Program with TOP INCLUDE
     (1-1) When creating the Program, Type: 'Module Pool' AND Status: 'Test Program' AND Application: 'Cross-Application'
+    -> Edited: select 'Executable program' instead of 'Module Pool'!!! (It doesn't work if you choose module pool)
 
 (2) Go to TOP INCLUDE and name all the db tables you will use in the Dynpro with 'TABLES:'
     (2-1) Add 'DATA: ok_code LIKE sy-ucomm.'

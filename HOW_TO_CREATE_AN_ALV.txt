@@ -1,0 +1,85 @@
+ALV
+
+***When you first create the program, select 'Executable program' and not 'Module Pool'!!! Otherwise it will cause 'Statement is not accessible.' when you execute it***
+
+In Class Builder (SE24),
+Search'CL_GUI_CUSTOM_CONTAINER'
+Go to Methods tab
+There, you can see the method named CONSTRUCTOR and its parameter CONTAINER_NAME is important!
+
+Next, go back and search 'CL_GUI_ALV_GRID'
+In the Methods tab, there's a method called SET_TABLE_FOR_FIRST_DISPLAY (instance method)
+This methods sends the internal table to the container!
+
+Create a screen, go to Layout and click on the Customer Control button (the icon in the toolbar on the left with a small 'c' in it)
+Select an area with clicking and dragging the mouse -> Container is created!
+Give it a name in the Name field above (ex. MYCONTAINER)
+Add ok_code
+
+
+In the main program, create an object of type CL_GUI_CUSTOM_CONTAINER and assign it to a variable of the type CL_GUI_CUSTOM_CONTAINER
+
+    DATA: lo_container TYPE REF TO CL_GUI_CUSTOM_CONTAINER,
+         gt_sflight TYPE TABLE OF sflight.
+
+    CREATE OBJECT lo_container
+    EXPORTING
+        container_name = 'MYCONTAINER'. <- the same as the one you had in the Screen Painter
+
+
+
+*Get the fields/structure catalogue for the internal table
+*This is necessary for displaying the grid
+
+DATA lt_fcat TYPE lvc_t_fcat.
+    CALL FUNCTION 'LVC_FIELDCATALOG_MERGE'
+    EXPORTING
+        i_structure_name = 'SFLIGHT' "the name of the table you're using to populate the list
+    CHANGING
+        ct_fieldcat = lt_fcat.
+
+
+DATA lo_alv TYPE REF TO CL_GUI_ALV_GRID.
+
+CREATE OBJECT lo_alv
+EXPORTING
+    i_parent = lo_container.
+
+OR
+
+lo_alv = NEW CL_GUI_ALV_GRID( lo_container ).
+
+
+
+*Prepare an ALV grid by calling the method SET_TABLE_FOR_FIRST_DISPLAY on our ALV object
+*mandatory parameters: it_outtab to pass our internal table!
+
+lo_alv->SET_TABLE_FOR_FIRST_DISPLAY(
+    CHANGING
+    it_outtab = gt_sflight
+    it_fieldcatalog = lt_fcat 
+).
+
+
+
+*Add a format to the ALV
+
+DATA gs_layout TYPE LVC_S_LAYO.
+gs_layout-zebra = abap_true. (OR gs_layout-zebra = 'X')
+
+
+Define a new variable for the format and add EXPORTING part for SET_TABLE_FOR_FIRST_DISPLAY method
+
+lo_alv->SET_TABLE_FOR_FIRST_DISPLAY(
+    EXPORTING               <- add this
+    is_layout = gs_layout   <- add this
+    CHANGING
+    it_outtab = gt_sflight
+    it_fieldcatalog = lt_fcat 
+).
+
+
+
+*And add this line!!! Otherwise nothing will happen when you execute the program
+
+CALL SCREEN 0100.
