@@ -1,0 +1,88 @@
+*&---------------------------------------------------------------------*
+*& Report Z30922_6001_INSTRUCT
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT z30922_6001_instruct.
+
+PARAMETERS: p_name       TYPE string, p_age TYPE i, p_grade TYPE p LENGTH 2, p_course(10) TYPE c, p_count TYPE i.
+
+
+DATA: gv_age     TYPE i, gv_grade TYPE p DECIMALS 2, gv_grade2 TYPE p LENGTH 2, gv_average TYPE p DECIMALS 2, gv_count TYPE i.
+
+
+**********************************************************************
+***Calculations
+**********************************************************************
+* mind the decimal format when assigning values
+gv_grade = '6.5'.
+gv_grade2 = p_grade.
+
+* mind spaces between the operands and operators
+gv_average = ( gv_grade + gv_grade2 ) / 2.
+gv_average = ( gv_average * gv_average ) - 1.
+
+WRITE gv_average.
+
+**********************************************************************
+***IF statement
+**********************************************************************
+gv_age = p_age.
+
+
+IF gv_age > 20 AND gv_age < 35.
+  WRITE: / , 'This must be a student'.
+  ULINE.
+ELSEIF gv_age > 17 AND gv_age <= 20.
+  WRITE: / , 'This might be a student'.
+ELSE.
+  WRITE: /, 'This is probably not a student'.
+ENDIF.
+
+**********************************************************************
+***CASE Statement
+**********************************************************************
+
+
+CASE p_course.
+  WHEN 'INFORMATIK'.
+    WRITE: / , 'Stundent likes coding'.
+  WHEN 'BUSINESS'.
+    WRITE: / , 'Student likes Finance'.
+ENDCASE.
+
+**********************************************************************
+***WHILE
+**********************************************************************
+gv_count = p_count.
+
+
+WHILE gv_count <= 10.
+
+  WRITE: /, 'The counter is at', gv_count.
+
+
+
+  gv_count = gv_count + 1.
+
+
+ENDWHILE.
+
+**********************************************************************
+***DO
+**********************************************************************
+
+
+DO 10 TIMES.
+
+
+  IF sy-index = 5.
+
+    WRITE: /, 'skipped'.
+    EXIT. "use CONTINUE to leave the iteration of the loop and EXIT to leave the loop
+  ENDIF.
+
+  gv_count = gv_count + 1.
+  WRITE: /, 'The counter is at', gv_count.
+
+ENDDO.

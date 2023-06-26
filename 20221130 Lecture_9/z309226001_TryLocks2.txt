@@ -1,0 +1,37 @@
+*&---------------------------------------------------------------------*
+*& Report Z30922_6001_TRYLOCKS2
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT Z30922_6001_TRYLOCKS2.
+
+
+CALL FUNCTION 'ENQUEUE_EZ309226001_PRSN'
+ EXPORTING
+   MODE_Z309226001_PRSN       = 'E'
+   MANDT                      = SY-MANDT
+   PERSONID                   = '1'
+*   X_PERSONID                 = ' '
+   _SCOPE                     = '2'
+*   _WAIT                      = ' '
+*   _COLLECT                   = ' '
+ EXCEPTIONS
+   FOREIGN_LOCK               = 1
+   SYSTEM_FAILURE             = 2
+   OTHERS                     = 3
+          .
+IF sy-subrc <> 0.
+* Implement suitable error handling here
+ENDIF.
+
+
+CALL FUNCTION 'DEQUEUE_EZ309226001_PRSN'
+* EXPORTING
+*   MODE_Z309226001_PRSN       = 'X'
+*   MANDT                      = SY-MANDT
+*   PERSONID                   =
+*   X_PERSONID                 = ' '
+*   _SCOPE                     = '3'
+*   _SYNCHRON                  = ' '
+*   _COLLECT                   = ' '
+          .

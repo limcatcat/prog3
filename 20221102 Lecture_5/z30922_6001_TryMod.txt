@@ -1,0 +1,125 @@
+*&---------------------------------------------------------------------*
+*& Report Z309_6001_TRYMOD
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT z30922_6001_trymod.
+
+
+**********************************************************************
+***Work with Open SQL and Database Tables
+**********************************************************************
+
+
+
+DATA: gt_pers TYPE TABLE OF z309226001_persn,
+      gs_pers TYPE z309226001_persn,
+      gt_title TYPE z309226001_titl,
+      gs_title TYPE z309226001_titl.
+
+
+**********************************************************************
+***SELECT INTO INTERNAL TABLE and ACCESS via LOOP AT
+**********************************************************************
+
+ULINE.
+WRITE 'Results With LOOP AT'.
+SELECT * FROM z309226001_persn INTO TABLE gt_pers.
+
+SORT gt_pers BY personid ASCENDING.
+
+LOOP AT gt_pers INTO gs_pers.
+  WRITE: /, gs_pers-personid, gs_pers-name,  gs_pers-family_name, gs_pers-title.
+ENDLOOP.
+
+**********************************************************************
+***SELECT INTO INTERNAL TABLE and ACCESS via LOOP AT
+**********************************************************************
+
+ULINE.
+WRITE 'Results With ENDSELECT'.
+SELECT * FROM z309226001_persn INTO gs_pers.
+  WRITE: /, gs_pers-personid, gs_pers-name,  gs_pers-family_name, gs_pers-title.
+ENDSELECT.
+
+**********************************************************************
+***Update, Append, Modify FROM WA/Structure
+**********************************************************************
+
+gs_pers-personid = 1.
+gs_pers-name = 'Peter'.
+gs_pers-family_name = 'Meier'.
+gs_pers-title = 'MR.'.
+
+APPEND gs_pers TO gt_pers.
+
+
+*UPDATE z309226001_persn FROM gs_pers. "updates
+*MODIFY z309226001_persn FROM gs_pers. "inserts or updates
+*INSERT z309226001_persn FROM gs_pers.
+*DELETE z309226001_persn FROM gs_pers.
+
+ULINE.
+Write: 'Update from Structure:'.
+IF sy-subrc <> 0.
+  WRITE: /, 'Person table not updated'.
+ELSE.
+  WRITE: /, 'Person table updated'.
+ENDIF.
+
+**********************************************************************
+***Update, Append, Modify FROM TABLE
+**********************************************************************
+
+gs_pers-personid = 2.
+gs_pers-name = 'Hans'.
+gs_pers-family_name = 'Mueller'.
+gs_pers-title = 'DR.'.
+
+
+APPEND gs_pers TO gt_pers.
+
+UPDATE z309226001_persn FROM TABLE gt_pers.
+*MODIFY z309226001_persn FROM TABLE gt_pers.
+*DELETE z309226001_persn FROM TABLE gt_pers.
+
+ULINE.
+Write: 'Update from Table:'.
+IF sy-subrc <> 0.
+  WRITE: /, 'Person table not updated'.
+ELSE.
+  WRITE: /, 'Person table updated'.
+ENDIF.
+
+**********************************************************************
+***Nested SELECT
+**********************************************************************
+
+ULINE.
+WRITE: 'Show Datasets grouped by Title'.
+
+SELECT * FROM z309226001_titl INTO gs_title.
+
+  WRITE: /, gs_title-titleid, gs_title-title.
+
+    SELECT * FROM z309226001_persn INTO gs_pers WHERE title = gs_title-title. "where connects the tables
+
+          WRITE: /, 20(10) gs_pers-name, 31(10) gs_pers-family_name.
+
+      ENDSELECT.
+
+      ENDSELECT.
+
+
+**********************************************************************
+***JOIN
+**********************************************************************
+
+ULINE.
+WRITE: 'With Join'.
+
+SELECT * FROM z309226001_persn AS p LEFT JOIN z309226001_titl AS t ON p~title = t~title INTO CORRESPONDING FIELDS OF gs_pers.
+
+    WRITE: /,  20(10) gs_pers-title, 31(10) gs_pers-name, 31(10) gs_pers-family_name.
+
+  ENDSELECT.

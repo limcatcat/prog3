@@ -1,0 +1,20 @@
+*&---------------------------------------------------------------------*
+*& Report Z30922_601_DBUG
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT Z30922_601_DBUG.
+
+
+DATA gv_count TYPE i VALUE 10.
+
+
+DO 10 TIMES.
+
+*Set a break point to start the debugger
+*you can also activate the debugger with transaction /h and deactivate with /hx
+*or start the debugger from the error screen
+gv_count = gv_count * gv_count.
+WRITE: /, gv_count.
+
+ENDDO.

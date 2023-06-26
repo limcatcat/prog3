@@ -1,0 +1,15 @@
+*&---------------------------------------------------------------------*
+*& Report Z30922_6001_TRYDATAEL
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT Z30922_6001_TRYDATAEL.
+
+
+*We created the data element in the DDIC, now we can use it in the program
+DATA: gv_title TYPE Z309226001_EN_CHAR30.
+PARAMETERS gv_title TYPE Z309226001_EN_CHAR31.
+
+*gv_title = 'Prof. Dr.'.
+
+WRITE: gv_title.

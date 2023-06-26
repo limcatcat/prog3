@@ -1,0 +1,40 @@
+*&---------------------------------------------------------------------*
+*& Report Z30922_6001_FLIGHTS
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT z30922_6001_flights.
+
+*We need an internal table and a structure/work area to read data
+*from a database table
+
+DATA: gt_spfli TYPE TABLE OF spfli,
+      gs_spfli TYPE spfli.
+
+*We use Open SQL to communicate with the database
+**********************************************************************
+***SELECT
+**********************************************************************
+
+*get the data from DB into internal table
+SELECT * FROM spfli INTO TABLE gt_spfli.
+
+*always check if SELECT was successful
+IF sy-subrc <> 0.
+  WRITE 'Reading from database not successful'.
+ELSE.
+*Loop through the internal table and read into work area, then use fields in wa to print
+*Obviously we could now also change the data in the fields - we'll make examples later
+  LOOP AT gt_spfli INTO gs_spfli.
+    WRITE: / gs_spfli-connid, gs_spfli-cityfrom, gs_spfli-countryfr, gs_spfli-cityto, gs_spfli-countryto, /.
+  ENDLOOP.
+
+ENDIF.
+
+**********************************************************************
+***SELECT SINGLE
+**********************************************************************
+
+***use when you want exactly one row/dataset
+SELECT SINGLE * FROM spfli INTO gs_spfli WHERE carrid = 'LH'.
+WRITE: / gs_spfli-connid, gs_spfli-cityfrom, gs_spfli-countryfr, gs_spfli-cityto, gs_spfli-countryto, /.

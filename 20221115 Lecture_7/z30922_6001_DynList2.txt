@@ -1,0 +1,71 @@
+*&---------------------------------------------------------------------*
+*& Report Z30922_6001_DYNLIST2
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT Z30922_6001_DYNLIST2.
+
+
+DATA: gt_itab TYPE TABLE OF z309226001_persn,
+      gs_wa TYPE z309226001_persn,
+      gs_wat TYPE z309226001_titl,
+      gv_sort TYPE i.
+
+
+**********************************************************************
+***This code allows to do a drill down on a row of data in a list
+***Use of the key word HIDE
+**********************************************************************
+
+
+TOP-OF-PAGE.
+
+WRITE: 'Drill Down possible for titles'.
+ULINE.
+
+
+**********************************************************************
+***THis is where the code of our program starts
+**********************************************************************
+
+START-OF-SELECTION.
+
+SELECT * FROM z309226001_persn INTO TABLE gt_itab.
+
+ PERFORM display.
+
+
+AT LINE-SELECTION.
+
+  WRITE: 'The Title-ID for this person in the table titles is'.
+
+  SELECT * FROM z309226001_titl INTO gs_wat WHERE title = gs_wa-title.
+
+    WRITE gs_wat-titleID.
+
+
+    ENDSELECT.
+
+    DATA: ok_code TYPE sy-ucomm.
+
+
+
+
+
+
+
+
+
+FORM display.
+
+  LOOP AT gt_itab INTO gs_wa.
+
+    WRITE: /, gs_wa-personid, gs_wa-name, gs_wa-family_name, gs_wa-title.
+
+    HIDE: gs_wa.
+
+
+  ENDLOOP.
+
+
+  ENDFORM.

@@ -1,0 +1,84 @@
+*&---------------------------------------------------------------------*
+*& Report Z30922_6001_SELADVANCED
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT z30922_6001_seldvanced.
+
+
+TYPES: BEGIN OF gs_fldatinfo,
+         fldate LIKE sbook-fldate,
+         count  TYPE i,
+         avg    TYPE p DECIMALS 2,
+         max    TYPE p DECIMALS 2,
+       END OF gs_fldatinfo.
+
+
+
+
+
+
+**********************************************************************
+***Using Aggregation Functions in Open SQL
+**********************************************************************
+
+
+**
+DATA: gv_nrrows TYPE i, gv_avg TYPE i.
+DATA: gs_sbook TYPE sbook.
+DATA: gt_book TYPE TABLE OF sbook.
+
+
+
+SELECT COUNT(*) FROM z309226001_persn INTO gv_nrrows.
+
+WRITE gv_nrrows.
+
+DATA gt_itab TYPE TABLE OF gs_fldatinfo.
+DATA gs_wa TYPE gs_fldatinfo.
+
+
+SELECT fldate COUNT( * ) AVG( luggweight ) MAX( luggweight )
+  FROM  sbook
+  INTO TABLE gt_itab
+  WHERE carrid = 'LH' AND connid = '0400'
+  GROUP BY fldate.
+
+
+*    LOOP AT gt_itab INTO gs_wa.
+*      WRITE: /, 1(10) gs_wa-fldate, 11(10) gs_wa-count, 21(10) gs_wa-avg, 31(10) gs_wa-max.
+*
+*    ENDLOOP.
+
+*
+*SELECT * FROM sbook INTO gs_sbook WHERE carrid = 'LH' AND connid = '0400'.
+*
+*  WRITE: /, gs_sbook-fldate.
+*
+*ENDSELECT.
+
+**********************************************************************
+***ABAP SQL - changes in OPEN SQL - new Syntax
+**********************************************************************
+
+SELECT fldate, COUNT( * ), AVG( luggweight ), MAX( luggweight ) "use of , between fields
+ FROM  sbook
+ WHERE carrid = 'LH' AND connid = '0400'
+ GROUP BY fldate
+ INTO TABLE @gt_itab. "use @ with host variable
+
+
+***Here we are using inline dclarations with @DATA
+
+SELECT fldate AS fldate, COUNT( * ) AS count, AVG( luggweight ) AS avg, MAX( luggweight ) AS max "use of , between fields
+FROM  sbook
+WHERE carrid = 'LH' AND connid = '0400'
+GROUP BY fldate
+INTO TABLE @DATA(gt_otheritab).  "inline declaration
+
+
+LOOP AT gt_otheritab INTO DATA(gs_otheritab).
+
+WRITE: /, 1(10) gs_otheritab-fldate, gs_otheritab-count.
+
+ENDLOOP.

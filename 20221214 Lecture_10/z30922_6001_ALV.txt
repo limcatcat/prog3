@@ -1,0 +1,75 @@
+*&---------------------------------------------------------------------*
+*& Report Z30922_6001_ALV
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT z30922_6001_alv.
+
+
+DATA OK_CODE TYPE sy-ucomm.
+
+**********************************************************************
+***Creating an ALV for the Dynpro 100
+**********************************************************************
+
+DATA: lo_container TYPE REF TO cl_gui_custom_container,
+      gt_sflight   TYPE TABLE OF sflight.
+
+*Get data
+SELECT * FROM sflight INTO CORRESPONDING FIELDS OF TABLE gt_sflight UP TO 100 ROWS.
+
+
+* Based on the class cl_gui_custom_container
+*create a container object and pass mandatory
+*parameter container_name with the name of
+*out control area on the Dynpro
+
+CREATE OBJECT lo_container
+  EXPORTING
+    container_name = 'CC_ALV'.
+
+
+DATA gs_layout TYPE lvc_s_layo.
+gs_layout-zebra = abap_true.
+
+*'X'
+
+*Get the fields/structure catalogue for the internal table
+*Needed for displaying the grid
+DATA lt_fcat TYPE lvc_t_fcat.
+CALL FUNCTION 'LVC_FIELDCATALOG_MERGE'
+  EXPORTING
+    i_structure_name = 'SFLIGHT'
+  CHANGING
+    ct_fieldcat      = lt_fcat.
+
+DATA lo_alv TYPE REF TO cl_gui_alv_grid.
+
+
+*Creates an object of our ALV grid
+*Classical way of creating an object in ABAP
+*CREATE OBJECT lo_alv
+*EXPORTING
+*  i_parent = lo_container.
+
+*New Syntax for creating an object
+lo_alv = NEW cl_gui_alv_grid( lo_container ).
+
+*Preparing the alv grid by calling the method set_table...
+*on our alv object
+*mandatory parameter is it_outtab to pass our internal table
+
+ lo_alv->set_table_for_first_display(
+  EXPORTING
+    is_layout = gs_layout
+  CHANGING
+    it_outtab = gt_sflight
+    it_fieldcatalog  = lt_fcat
+ ).
+
+ CALL SCREEN 0100.
+
+
+INCLUDE z30922_6001_alv_status_0100o01.
+
+INCLUDE z30922_6001_alv_user_commani01.

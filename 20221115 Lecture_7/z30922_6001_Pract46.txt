@@ -1,0 +1,71 @@
+*&---------------------------------------------------------------------*
+*& Report Z30922_6001_PRACT46
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT Z30922_6001_PRACT46.
+
+
+TYPES: BEGIN OF gty_flights,
+        connect TYPE spfli-connid,
+        name TYPE scarr-carrname,
+        deptcty TYPE spfli-cityto,
+        arrcty TYPE spfli-cityfrom,
+        avgocc TYPE p DECIMALS 2,
+  END OF gty_flights.
+
+  DATA: wa_sflight TYPE sflight,
+        wa_spfli TYPE spfli,
+        wa_scarr TYPE scarr,
+        gt_flights TYPE TABLE OF gty_flights,
+        gs_flights TYPE gty_flights,
+        name TYPE c LENGTH 20,
+        gv_occupation TYPE p DECIMALS 2.
+
+
+*
+* SELECT sp~connid AS connect, carrname AS name, cityfrom AS deptcty, cityto AS arrcty, AVG( seatsocc ) AS avgocc
+*   FROM spfli AS sp
+*   JOIN sflight AS sf ON sp~connid = sf~connid
+*   JOIN scarr AS sc ON sc~carrid = sp~carrid
+*   GROUP BY sp~connid, sc~carrname, cityfrom, cityto
+*   INTO TABLE @gt_flights.
+*
+*
+*   WRITE: /, 1 'Connection', 21 'Airline', 41 'City From', 61 'City to', 95 'Avg Occ'.
+*
+*   LOOP AT gt_flights INTO gs_flights.
+*
+*     WRITE: /, 1 gs_flights-connect, 21 gs_flights-name, 41 gs_flights-deptcty, 61 gs_flights-arrcty, 85 gs_flights-avgocc.
+*
+*
+*   ENDLOOP.
+
+
+
+   SELECT sp~connid AS connect, carrname AS name, cityfrom AS deptcty, cityto AS arrcty, AVG( seatsocc ) AS avgocc
+   FROM spfli AS sp
+   JOIN sflight AS sf ON sp~connid = sf~connid
+   JOIN scarr AS sc ON sc~carrid = sp~carrid
+   GROUP BY sp~connid, sc~carrname, cityfrom, cityto
+   INTO TABLE @DATA(gt_itab).
+
+
+   WRITE: /, 1 'Connection', 21 'Airline', 41 'City From', 61 'City to', 95 'Avg Occ'.
+
+   LOOP AT gt_itab INTO DATA(gs_itab).
+
+     gv_occupation = gs_itab-avgocc.
+
+     WRITE: /, 1 gs_itab-connect, 21 gs_itab-name, 41 gs_itab-deptcty, 61 gs_itab-arrcty, 85 gv_occupation.
+
+   ENDLOOP.
+
+
+**********************************************************************
+***Check
+**********************************************************************
+
+SELECT AVG( seatsocc ) FROM sflight INTO gv_occupation WHERE carrid = 'LH' AND connid = '0400'.
+
+  WRITE: /, gv_occupation.

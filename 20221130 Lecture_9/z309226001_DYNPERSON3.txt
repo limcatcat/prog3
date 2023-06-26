@@ -1,0 +1,153 @@
+*&---------------------------------------------------------------------*
+*& Module Pool      Z30922_6001_DYNPERSN3
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+
+INCLUDE Z30922_6001_DYNPERSN3_TOP               .    " Global Data
+
+* INCLUDE Z30922_6001_DYNPERSN3_O01               .  " PBO-Modules
+* INCLUDE Z30922_6001_DYNPERSN3_I01               .  " PAI-Modules
+* INCLUDE Z30922_6001_DYNPERSN3_F01               .  " FORM-Routines
+
+
+INCLUDE z30922_6001_dynpersn3_stat100.
+
+INCLUDE z30922_6001_dynpersn3_usc100.
+
+INCLUDE z30922_6001_dynpersn3_stat200.
+
+INCLUDE z30922_6001_dynpersn3_usc200.
+
+*&---------------------------------------------------------------------*
+*& Include Z30922_6001_DYNPERSN3_TOP                - Module Pool      Z30922_6001_DYNPERSN3
+*&---------------------------------------------------------------------*
+PROGRAM Z30922_6001_DYNPERSN3.
+
+TABLES: z309226001_prsn.
+
+DATA: ok_code LIKE sy-ucomm,
+      wa_prsn TYPE z309226001_prsn,
+      f_personid TYPE z309226001_prsn-personid,
+      f_family TYPE z309226001_prsn-family_name,
+      f2_personid TYPE z309226001_prsn-personid,
+      f2_name TYPE z309226001_prsn-name,
+      f2_lastname TYPE z309226001_prsn-family_name, "could also name variable family
+      f2_title TYPE z309226001_prsn-title.
+
+*----------------------------------------------------------------------*
+***INCLUDE Z30922_6001_DYNPERSN3_STAT100.
+*----------------------------------------------------------------------*
+*&---------------------------------------------------------------------*
+*& Module STATUS_0100 OUTPUT
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+MODULE status_0100 OUTPUT.
+SET PF-STATUS '100'.
+SET TITLEBAR '100'.
+ENDMODULE.
+
+*----------------------------------------------------------------------*
+***INCLUDE Z30922_6001_DYNPERSN3_STAT200.
+*----------------------------------------------------------------------*
+*&---------------------------------------------------------------------*
+*& Module STATUS_0200 OUTPUT
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+MODULE status_0200 OUTPUT.
+SET PF-STATUS '200'.
+SET TITLEBAR '200'.
+
+
+
+  f2_personID = wa_prsn-personid.
+  f2_name = wa_prsn-name.
+  f2_lastname = wa_prsn-family_name.
+  f2_title = wa_prsn-title.
+
+
+ENDMODULE.
+
+*----------------------------------------------------------------------*
+***INCLUDE Z30922_6001_DYNPERSN3_USC100.
+*----------------------------------------------------------------------*
+*&---------------------------------------------------------------------*
+*&      Module  USER_COMMAND_0100  INPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE user_command_0100 INPUT.
+
+CASE ok_code.
+  WHEN 'BACK'.
+    LEAVE PROGRAM.
+  WHEN 'EXIT'.
+    LEAVE PROGRAM.
+  WHEN 'SELECT'.
+    SELECT SINGLE * FROM z309226001_prsn INTO wa_prsn WHERE personid = f_personid.
+    ENDCASE.
+
+Clear ok_code.
+
+ENDMODULE.
+
+*----------------------------------------------------------------------*
+***INCLUDE Z30922_6001_DYNPERSN3_USC200.
+*----------------------------------------------------------------------*
+*&---------------------------------------------------------------------*
+*&      Module  USER_COMMAND_0200  INPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE user_command_0200 INPUT.
+
+  CASE ok_code.
+    WHEN 'BACK'.
+      SET SCREEN 100.
+    WHEN 'EXIT'.
+      LEAVE PROGRAM.
+    WHEN 'SET'.
+
+      wa_prsn-personid = f2_personid.
+      wa_prsn-name = f2_name.
+      wa_prsn-family_name = f2_lastname.
+      wa_prsn-title = f2_title.
+
+**If we use IN UPDATE TASK, we send the data to our Updater process
+      CALL FUNCTION 'Z309226001FM_PERSN' IN UPDATE TASK
+        EXPORTING
+          ip_personid     = wa_prsn-personid
+          ip_name         = wa_prsn-name
+          ip_family_name  = wa_prsn-family_name
+          ip_title        = wa_prsn-title
+        EXCEPTIONS
+          parameter_error = 1
+          update_error    = 2.
+
+*SET SCREEN 200.
+
+    WHEN 'SAVE'.
+      COMMIT WORK.
+
+      IF sy-subrc = 0.
+        MESSAGE: 'Person updated in the database' TYPE 'I'.
+      ELSEIF sy-subrc = 1.
+        MESSAGE: 'Please maintain all fields' TYPE 'I'.
+      ELSEIF sy-subrc = 2.
+        MESSAGE: 'Problem writing to database' TYPE 'I'.
+      ENDIF.
+
+   SET SCREEN 200.
+
+  ENDCASE.
+
+
+  CLEAR ok_code.
+
+
+
+ENDMODULE.
+
+

@@ -1,0 +1,38 @@
+FUNCTION z309226001fm_persn.
+*"----------------------------------------------------------------------
+*"*"Update Function Module:
+*"
+*"*"Local Interface:
+*"  IMPORTING
+*"     VALUE(IP_PERSONID) TYPE  Z309226001_PRSN-PERSONID
+*"     VALUE(IP_NAME) TYPE  Z309226001_PRSN-NAME
+*"     VALUE(IP_FAMILY_NAME) TYPE  Z309226001_PRSN-FAMILY_NAME
+*"     VALUE(IP_TITLE) TYPE  Z309226001_PRSN-TITLE
+*"  EXCEPTIONS
+*"      PARAMETER_ERROR
+*"      UPDATE_ERROR
+*"----------------------------------------------------------------------
+
+  DATA: itab    TYPE TABLE OF z309226001_prsn,
+        wa_pers TYPE z309226001_prsn.
+
+*SELECT * FROM Z309226001_PERSN WHERE personID = ip_personID INTO ITAB.
+
+  IF ip_personid IS INITIAL.
+    RAISE parameter_error.
+  ENDIF.
+
+  wa_pers-personid = ip_personid.
+  wa_pers-name = ip_name.
+  wa_pers-family_name = ip_family_name.
+  wa_pers-title = ip_title.
+
+  MODIFY z309226001_prsn FROM wa_pers.
+
+
+  IF sy-subrc <> 0.
+    RAISE update_error.
+  ENDIF.
+
+
+ENDFUNCTION.

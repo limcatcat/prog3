@@ -1,0 +1,63 @@
+*&---------------------------------------------------------------------*
+*& Report Z30922_6001_TRYOBJECTS2
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT Z30922_6001_TRYOBJECTS2.
+
+INCLUDE Z309_6001_CLASS_INCLUDE.
+
+
+**********************************************************************
+***Use of our class lcl_airplane
+**********************************************************************
+
+DATA: r_plane TYPE REF TO lcl_airplane.
+
+
+START-OF-SELECTION.
+
+CREATE OBJECT r_plane.
+
+r_plane->set_attributes(
+EXPORTING
+  im_name = 'Hamburg'
+  im_planetype = 'Boeing 737').
+
+r_plane->get_attributes( ).
+
+*&---------------------------------------------------------------------*
+*& Include          Z309_6001_CLASS_INCLUDE
+*&---------------------------------------------------------------------*
+
+CLASS lcl_airplane DEFINITION.
+
+  PUBLIC SECTION.
+
+    METHODS: set_attributes
+      IMPORTING
+        im_name      TYPE string
+        im_planetype TYPE string,
+      get_attributes.
+
+  PRIVATE SECTION.
+    DATA: gv_name      TYPE string,
+          gv_planetype TYPE string.
+
+ENDCLASS.
+
+CLASS lcl_airplane IMPLEMENTATION.
+
+  METHOD set_attributes.
+    gv_name = im_name.
+    gv_planetype = im_planetype.
+  ENDMETHOD.
+
+
+METHOD get_attributes.
+  WRITE: / 'Flight name: ' , gv_name.
+  WRITE: / 'Flight type : ', gv_planetype.
+  ENDMETHOD.
+
+
+ENDCLASS.

@@ -1,0 +1,83 @@
+*&---------------------------------------------------------------------*
+*& Report Z30922_6001_STRINGS
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT z30922_6001_strings.
+
+
+DATA gv_text1 TYPE string.
+DATA gv_text2 TYPE string.
+
+
+gv_text1 = '   This is a text'.
+gv_text2 = 'This is a text, too   '.
+
+
+**********************************************************************
+***Concatenate and Split
+**********************************************************************
+
+CONCATENATE gv_text1 gv_text2 INTO gv_text1.
+
+"same thing you can use && = ampersand for concatenation
+gv_text1 = gv_text1 && gv_text2.  "+ does not work
+
+
+SPLIT gv_text1 AT ',' INTO gv_text1 gv_text2.
+
+
+**********************************************************************
+***SEARCH - FIND to find a pattern in Strings
+**********************************************************************
+
+FIND 'text' IN gv_text1.
+
+IF sy-subrc = 0.
+  WRITE: / , 'pattern found'.
+ELSE.
+  WRITE: / , 'pattern not found'.
+ENDIF.
+
+**********************************************************************
+***REPLACE - replace a pattern in String
+**********************************************************************
+
+
+REPLACE 'text' IN gv_text1 WITH 'string'.
+
+IF sy-subrc = 0.
+  WRITE: / , gv_text1.
+
+ELSE.
+  WRITE: / , 'pattern not found'.
+ENDIF.
+
+
+**********************************************************************
+***CONDENSE
+**********************************************************************
+
+CONDENSE gv_text1.
+
+WRITE: / , gv_text1.
+
+
+**********************************************************************
+* **TRANSLATE - for upper and lower case
+* *********************************************************************
+
+
+TRANSLATE gv_text1 TO LOWER CASE.
+WRITE: / , gv_text1.
+
+TRANSLATE gv_text1 TO UPPER CASE.
+WRITE: / , gv_text1.
+
+
+**********************************************************************
+* **Text symbols are used like constants
+* *********************************************************************
+
+WRITE: / , text-001.
+WRITE: / , text-002.

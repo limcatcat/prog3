@@ -1,0 +1,24 @@
+*&---------------------------------------------------------------------*
+*& Report Z30922_6001_TRYCONTROL
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT z30922_6001_trycontrol.
+
+DATA: number1 TYPE i, number2 TYPE i.
+
+
+DO 10 TIMES.
+*WRITE: sy-vline. " = pipe: |
+  WRITE: '|'. " = pipe: |
+  number1 = sy-index.
+  WRITE: (5) number1 CENTERED. "COLOR COL_NEGATIVE.
+ENDDO.
+ULINE.
+
+DO 10 TIMES.
+WRITE: sy-vline.
+  number2 = sy-index.
+  WRITE: (5) number2 CENTERED. "COLOR COL_NEGATIVE.
+  ULINE.
+ENDDO.

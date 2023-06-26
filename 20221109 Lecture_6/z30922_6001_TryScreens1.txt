@@ -1,0 +1,121 @@
+*&---------------------------------------------------------------------*
+*& Report Z30922_6001_TRYSCREENS1
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT z30922_6001_tryscreens1.
+
+**********************************************************************
+***REPORT with Selection Screen
+**********************************************************************
+
+
+**********************************************************************
+***START of Block1
+**********************************************************************
+SELECTION-SCREEN BEGIN OF BLOCK b1 WITH FRAME TITLE TEXT-002.
+
+*Starting with a comment
+SELECTION-SCREEN COMMENT /1(50) TEXT-001.
+
+PARAMETERS: p_myname TYPE string DEFAULT '<Enter your name>' LOWER CASE. "input field
+
+**Creating a selection option thal allows you to use value ranges
+DATA: gv_title TYPE z309226001_titl-title.
+DATA: gv_name TYPE string.
+SELECT-OPTIONS so_title FOR gv_title . " gives a value range and you need a data object to pupulate it
+
+SELECTION-SCREEN SKIP 1.
+SELECTION-SCREEN ULINE.
+
+PARAMETERS p_male TYPE char01 AS CHECKBOX.
+PARAMETERS p_female TYPE char01 AS CHECKBOX.
+
+PARAMETERS p_marrd TYPE char01 RADIOBUTTON GROUP grp1.
+PARAMETERS p_nmarrd TYPE char01 RADIOBUTTON GROUP grp1.
+
+
+**Button
+SELECTION-SCREEN PUSHBUTTON /1(30) text USER-COMMAND btn1 VISIBLE LENGTH 30.
+
+SELECTION-SCREEN PUSHBUTTON /1(30) text2 USER-COMMAND btn2 VISIBLE LENGTH 30.
+
+
+SELECTION-SCREEN END OF BLOCK b1.
+**********************************************************************
+***End of Block1
+**********************************************************************
+
+**********************************************************************
+*** This event defines the selection screen and it is used to initialize
+*** input fields and variables of the selection screen.
+**********************************************************************
+
+INITIALIZATION.
+
+**just use the code as is - we cover functions later
+  CALL FUNCTION 'ICON_CREATE'
+    EXPORTING
+      name   = icon_information
+      text   = 'Save Personal Data'
+      info   = 'Save'
+    IMPORTING
+      result = text
+    EXCEPTIONS
+      OTHERS = 0.
+
+
+  CALL FUNCTION 'ICON_CREATE'
+    EXPORTING
+      name   = icon_information
+      text   = 'Other Button'
+      info   = 'Other'
+    IMPORTING
+      result = text2
+    EXCEPTIONS
+      OTHERS = 0.
+
+TABLES: sscrfields. "importing a structure, we need for the button
+
+AT SELECTION-SCREEN.
+
+  IF sscrfields-ucomm = 'BTN1'. "case sensitive
+    MESSAGE 'you pressed the right button' TYPE 'I'.
+  ELSEIF sscrfields-ucomm = 'BTN2'.
+    MESSAGE 'you pressed the other button' TYPE 'I'.
+
+    ENDIF.
+
+
+
+**********************************************************************
+***Actual program starts here
+**********************************************************************
+
+
+START-OF-SELECTION.
+
+  IF p_male = `X` AND p_female = ``.
+    gv_name = 'Hello' && ` Mr. ` && p_myname.
+  ENDIF.
+
+  WRITE: gv_name.
+
+
+
+  DATA: gt_titles TYPE TABLE OF z309226001_titl,
+        gs_titles TYPE z309226001_titl.
+
+*Using the select options in an SQL statement
+*PLEASE NOTE: In the lecture demo here was the problem - the SELECT was on the wrong table
+*With this code it is working - select option chooses the entries from the table sorted alphabetically!
+  SELECT * FROM z309226001_titl INTO TABLE gt_titles WHERE title IN so_title.
+
+  IF sy-subrc <> 0.
+    WRITE 'problem reading data'.
+  ELSE.
+    LOOP AT gt_titles INTO gs_titles.
+      WRITE: /'Options', gs_titles-titleid, gs_titles-title.
+    ENDLOOP.
+
+  ENDIF.

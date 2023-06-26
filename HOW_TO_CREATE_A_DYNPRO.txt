@@ -1,0 +1,69 @@
+How to create a Dynpro:
+(1) Create a Program with TOP INCLUDE
+    (1-1) When creating the Program, Type: 'Module Pool' AND Status: 'Test Program' AND Application: 'Cross-Application'
+
+(2) Go to TOP INCLUDE and name all the db tables you will use in the Dynpro with 'TABLES:'
+    (2-1) Add 'DATA: ok_code LIKE sy-ucomm.'
+    (2-2) Declare a workarea and variables for the fields in the table (gs_wa, f_personid TYPE Z309226009_pers-personid, ...) -> the steps for (2) can also be done after you've created a screen(Dynpro)
+
+(3) Right click on the Program name in the list on the left and Create - Screen
+    (3-1) Screen Number: 100 (first screen)
+    (3-2) Write a short description and Next Dynpro: 200
+    (3-3) Activate it
+
+(4) Click on 'Layout' in the upper toolbar (the Screen Painter will open)
+    " (4-1) Click on the blue icon with a red square -> Enter the name of the db table and select the necessary fields
+    " (4-2) Click on the input fields created and uncheck From dict. in Attributes area (WHY?)
+    (4-1) Create fields using text and input field icons (adjust the Format for the input field if necessary).
+   *(4-2) Change the names of the input fields as declared in the TOP INCLUDE before (f_personid (for Screen 100), f2_personid (for Screen 200), ...)
+    (4-3) Click on the blue icon (without the red square) and add 'ok_code' at the bottom of the list.
+    (4-4) Close the Screen Painter and Activate the screen in SAP GUI
+
+(5) Go to Screens - 100 - 'Flow logic' tab
+    (5-1) Remove comments already written there
+    (5-2) Create modules (modules are programs associated with Dynpro): Double-click on MODULE STATUS_0100., click on Yes
+    (5-3) Change the name of the Include: '...(prefix)_STAT100'
+    (5-4) Click on the check mark, again click on the check mark -> A new text editor for STAT100 will open
+
+(6) Go to Screens - 100, double-click on MODULE USER_COMMAND_0100., click on Yes
+    (6-1) Change the name of the Include: '...(prefix)_USC100' (which means User Command)
+    (6-2) Click on the check mark, again click on the check mark -> A new text editor for USC100 will open
+
+(7) Go to STAT100 in Includes
+    (7-1) Remove * before each line and change 'xxx' to '100'
+    (7-2) Double-click on PF-STATUS '100'. and click on Yes
+    (7-3) Write a short description
+    (7-4) Click on the + sign next to 'Function Keys', write 'BACK' and 'EXIT' for the green and yellow arrows, activate it
+    (7-5) Go back to STAT100 and double-click on SET TITLEBAR '100'. and click on Yes, enter the Title for the window
+    (7-6) Go back to STAT100, save and activate it
+
+(8) Go to USC100 in Includes
+    (8-1) Write 
+                CASE ok_code.
+                    WHEN 'BACK'.
+                        LEAVE PROGRAM.
+                    WHEN 'EXIT'.
+                        LEAVE PROGRAM.
+                    WHEN OTHERS.
+                ENDCASE.
+
+                Clear ok_code.
+
+        Save and activate it
+
+(9) Right-click on the main program, Create - Transaction - Transaction code: Z309226009_Dynpro (or something) AND write something in Short text, Program and dynpro (dialog transaction), Enter
+    (9-1) A new window will open. Enter the name of the main program in Program and Screen number: 100, go down and check everything in GUI support area
+
+
+(10) For search-help: Go to SE11 (ABAP Dictionary Maintenance), select Search help and enter '...(prefix)_personid' (or something), click on Create
+    (10-1) In Selection method, enter the name of the db table you want to use for the search.
+    (10-2) Go below and in the Parameter area, check IMP and EXP accordingly. (when IMP is checked, User can enter a value for it and when EXP is checked, User will get the value back as the result of search)
+
+
+(11) Go to Screens - 100, click on Layout, double-click on input field and enter the name of the search help just created in 'Search Help'
+
+
+(12) Create Screen 200: Right-click on the Screens folder and Create, Screen number: 200 (the steps afterwards are (almost) identical to those for Screen 100)
+
+
+

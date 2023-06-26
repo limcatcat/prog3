@@ -1,0 +1,53 @@
+*&---------------------------------------------------------------------*
+*& Report Z309_6001_FMADDSTU
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT z309_6001_fmaddstu.
+
+PARAMETERS: p_first TYPE z309226001_stu-firstname,
+            p_last  TYPE z309226001_stu-lastname,
+            p_bday  TYPE z309226001_stu-birthday,
+            p_sem   TYPE z309226001_stu-semester,
+            p_fac   TYPE z309226001_stu-faculty.
+
+IF p_first IS INITIAL OR p_last IS INITIAL OR p_bday IS INITIAL OR p_sem
+   IS INITIAL OR p_fac IS INITIAL.
+  MESSAGE 'Please fill out all fields' TYPE 'E'.
+
+ELSE.
+
+  DATA: matnumber TYPE z309226001_stu-matnr.
+
+
+
+  CALL FUNCTION 'Z309226001_FM_ADDSTU'
+    EXPORTING
+      ip_first     = p_first
+      ip_last      = p_last
+      ip_birthday  = p_bday
+      ip_semester  = p_sem
+      ip_faculty   = p_fac
+    IMPORTING
+      ex_mat       = matnumber
+    EXCEPTIONS
+      infos_error  = 1
+      modify_error = 2
+      OTHERS       = 3.
+
+  IF sy-subrc = 1.
+    WRITE: 'Data entry incomplete' COLOR COL_NEGATIVE.
+  ELSEIF sy-subrc = 2.
+    WRITE: 'Problem when inserting student into database' COLOR COL_NEGATIVE.
+  ELSEIF sy-subrc = 3.
+    WRITE: 'Other Problem'.
+  ELSE.
+    WRITE: /'Student inserted successfully with the data:'.
+    WRITE: / 'Matriculation Number: ', matnumber.
+
+  ENDIF.
+
+
+
+
+ENDIF.

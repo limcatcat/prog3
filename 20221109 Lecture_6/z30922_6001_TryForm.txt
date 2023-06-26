@@ -1,0 +1,52 @@
+*&---------------------------------------------------------------------*
+*& Report Z30922_6001_TRYFORM1
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT z30922_6001_tryform1.
+
+
+PARAMETERS p_number LENGTH 10.
+
+DATA gv_number TYPE i.
+DATA gv_result TYPE int8.
+
+
+gv_number = p_number.
+
+IF gv_number = 0 AND gv_number < 0.
+  WRITE: /, 'Please enter a postive number not equal to 0'.
+ELSE.
+  PERFORM factorial USING gv_number ChANGING gv_result.
+ENDIF.
+
+WRITE: /, ' result for', gv_number, gv_result.
+
+
+
+
+**********************************************************************
+***Put the FORM at the end of the Code her
+**********************************************************************
+
+
+FORM factorial USING VALUE(gv_number) CHANGING gv_result.
+
+  DATA: lv_number2 TYPE i, lv_number3 TYPE i.
+  lv_number2 = gv_number.
+  lv_number3 = lv_number2 - 1.
+
+
+  DO gv_number - 1 TIMES.
+
+    gv_result = lv_number2 * lv_number3.
+    lv_number2 = gv_result.
+    lv_number3 = lv_number3 - 1.
+
+  ENDDO.
+
+  gv_number = 6.
+  Write: /, 'local number', gv_number.
+
+
+ENDFORM.

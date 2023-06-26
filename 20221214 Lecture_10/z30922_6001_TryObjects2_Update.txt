@@ -1,0 +1,108 @@
+*&---------------------------------------------------------------------*
+*& Include          Z309_6001_CLASS_INCLUDE
+*&---------------------------------------------------------------------*
+
+CLASS lcl_airplane DEFINITION.
+
+  PUBLIC SECTION.
+
+    METHODS: set_attributes
+      IMPORTING
+        im_name      TYPE string
+        im_planetype TYPE string,
+      get_attributes,
+      constructor.
+
+    CLASS-METHODS get_no_of_planes
+      EXPORTING number_of_planes TYPE i.
+
+  PRIVATE SECTION.
+    DATA: gv_name      TYPE string,
+          gv_planetype TYPE string.
+
+    CLASS-DATA gv_number_of_planes TYPE i.
+
+ENDCLASS.
+
+CLASS lcl_airplane IMPLEMENTATION.
+
+ METHOD constructor.
+   gv_number_of_planes = gv_number_of_planes + 1.
+   ENDMETHOD.
+
+  METHOD set_attributes.
+    gv_name = im_name.
+    gv_planetype = im_planetype.
+  ENDMETHOD.
+
+
+  METHOD get_attributes.
+    WRITE: / 'Flight name: ' , gv_name.
+    WRITE: / 'Flight type : ', gv_planetype.
+  ENDMETHOD.
+
+  METHOD get_no_of_planes.
+    number_of_planes = gv_number_of_planes.
+  ENDMETHOD.
+
+
+ENDCLASS.
+
+
+*&---------------------------------------------------------------------*
+*& Report Z30922_6001_TRYOBJECTS2
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT Z30922_6001_TRYOBJECTS2.
+
+*INCLUDE Z309_6001_CLASS_INCLUDE.
+
+
+**********************************************************************
+***Use of our class lcl_airplane
+**********************************************************************
+
+DATA: r_plane TYPE REF TO Z309226001_AIRPLANE,
+      it_plane_list TYPE TABLE OF REF TO Z309226001_AIRPLANE,
+      gv_no_of_planes TYPE i.
+
+
+START-OF-SELECTION.
+
+CREATE OBJECT r_plane.
+
+r_plane->set_attributes(
+EXPORTING
+  im_name = 'Hamburg'
+  im_planetype = 'Boeing 737').
+APPEND r_plane TO it_plane_list.
+
+
+CREATE OBJECT r_plane.
+r_plane->set_attributes(
+EXPORTING
+  im_name = 'Munich'
+  im_planetype = 'Airbus 380').
+APPEND r_plane TO it_plane_list.
+
+
+CREATE OBJECT r_plane.
+r_plane->set_attributes(
+EXPORTING
+  im_name = 'Augsburg'
+  im_planetype = 'Airbus 380').
+APPEND r_plane TO it_plane_list.
+
+CLEAR r_plane.
+
+LOOP AT it_plane_list INTO r_plane.
+r_plane->get_attributes( ).
+
+ENDLOOP.
+
+Z309226001_AIRPLANE=>get_no_of_planes(
+IMPORTING
+  number_of_planes = gv_no_of_planes ).
+
+WRITE: /, 'We have created:', gv_no_of_planes, 'airplanes'.

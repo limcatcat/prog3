@@ -1,0 +1,48 @@
+*&---------------------------------------------------------------------*
+*& Report Z30922_6001_TRYDATA
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT z30922_6001_trydata.
+
+
+
+**********************************************************************
+***DATA Declaration for fields
+**********************************************************************
+
+TYPES gty_id TYPE c LENGTH 8. " defining our own field type
+
+*remember the naming convention: g = global = accessible in the whole program
+*l = local = accessible only in sub-programs
+DATA gv_number TYPE i. "declaring a variable of predefined Type integer
+DATA gv_decnumber TYPE p DECIMALS 2. "used to store positive decimal numbers
+DATA gv_number2 TYPE i VALUE 2. "setting the initial value
+
+*Using the chain set Kettensatz
+DATA: gv_number3 TYPE i VALUE 2,
+      gv_number5 TYPE i,
+      gv_text    TYPE string,
+      gv_id      TYPE gty_id VALUE '1231',
+      gv_id2     LIKE gv_id. "LIKE is used with bound data types
+
+
+gv_id = '1233124'.
+gv_id2 = gv_id.
+
+gv_number = gv_id.
+
+WRITE gv_id.
+WRITE gv_id2.
+
+
+
+
+*Remember to use Ctrl F2 for Syntax check
+* Ctrl S for saving
+* Ctrl F3 for Activation
+* F8 for Running the program
+WRITE gv_number2.
+WRITE gv_id.
+
+WRITE: /, gv_number.

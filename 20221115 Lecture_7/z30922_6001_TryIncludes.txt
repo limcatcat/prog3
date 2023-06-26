@@ -1,0 +1,43 @@
+*Create new report WITH TOP INCLUDE
+*Then create include for selection screen
+
+
+*&---------------------------------------------------------------------*
+*& Report Z30922_6001_TRYINCLUDES
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+
+INCLUDE Z30922_6001_TRYINCLUDES_TOP             .    " Global Data
+INCLUDE Z30922_6001_TRYINCLUDES_SEL.                  "Selection Screen
+* INCLUDE Z30922_6001_TRYINCLUDES_O01             .  " PBO-Modules
+* INCLUDE Z30922_6001_TRYINCLUDES_I01             .  " PAI-Modules
+* INCLUDE Z30922_6001_TRYINCLUDES_F01             .  " FORM-Routines
+
+operator = '+'.
+
+WRITE: /, 'Hello after TOP include'.
+WRITE: /, 'Operator was set to', operator.
+
+
+
+*&---------------------------------------------------------------------*
+*& Include Z30922_6001_TRYINCLUDES_TOP              - Report Z30922_6001_TRYINCLUDES
+*&---------------------------------------------------------------------*
+REPORT Z30922_6001_TRYINCLUDES.
+
+
+
+DATA: number1 TYPE i, number2 TYPE i, result TYPE i.
+
+
+WRITE: 'Hello from TOP include'.
+
+
+*&---------------------------------------------------------------------*
+*& Include          Z30922_6001_TRYINCLUDES_SEL
+*&---------------------------------------------------------------------*
+
+PARAMETERS operator TYPE c.
+
+

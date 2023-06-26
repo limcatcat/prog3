@@ -1,0 +1,146 @@
+*&---------------------------------------------------------------------*
+*& Report Z30922_601_COMPLEX
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT z30922_601_complex.
+
+**********************************************************************
+***create a Structure TYPE
+**********************************************************************
+
+TYPES: BEGIN OF gty_s_employee, "global structure type
+         pernr     TYPE i,
+         firstname TYPE string,
+         name      TYPE string,
+         age       TYPE i,
+       END OF gty_s_employee.
+
+**********************************************************************
+***Create a table type
+**********************************************************************
+
+TYPES gty_t_employee TYPE TABLE OF gty_s_employee.
+
+"Standard or Sorted (TYPE SORTED TABLE OF) or Hash
+
+**********************************************************************
+***Declare the variables from the types
+**********************************************************************
+
+DATA gs_employee TYPE gty_s_employee.
+DATA gs_employee2 TYPE gty_s_employee.
+DATA gt_employee TYPE gty_t_employee.
+DATA gt_employee2 TYPE TABLE OF gty_s_employee. "WITH UNIQUE KEY pernr.
+
+**********************************************************************
+***FILL STRUCTURES AND TABLES with DATA - use different commands:
+***Single access vs. multiple access
+**********************************************************************
+
+**********************************************************************
+***INSERT / APPEND
+**********************************************************************
+
+gs_employee-pernr = 1.
+gs_employee-firstname = 'Hans'.
+gs_employee-name = 'Peter'.
+gs_employee-age = 99.
+
+APPEND gs_employee TO gt_employee.
+CLEAR gs_employee.
+
+
+gs_employee-pernr = 3.
+gs_employee-firstname = 'Sepp'.
+gs_employee-name = 'Meier'.
+gs_employee-age = 99.
+
+APPEND gs_employee TO gt_employee.
+
+
+gs_employee2-pernr = 2.
+gs_employee2-firstname = 'Manuel'.
+gs_employee2-name = 'Neuer'.
+gs_employee2-age = 33.
+
+INSERT gs_employee2 INTO gt_employee INDEX 2.
+
+MOVE gs_employee-pernr TO gs_employee2-pernr.
+
+WRITE gs_employee2-pernr.
+
+WRITE: / , gs_employee2-pernr, gs_employee2-firstname, gs_employee2-name, gs_employee2-age.
+
+
+MOVE-CORRESPONDING gs_employee TO gs_employee2.
+WRITE: / , gs_employee2-pernr, gs_employee2-firstname, gs_employee2-name, gs_employee2-age.
+
+CLEAR: gs_employee, gs_employee2.
+
+
+**********************************************************************
+***Read Datasets
+**********************************************************************
+
+READ TABLE gt_employee INDEX 2 INTO gs_employee.
+
+"READ TABLE gt_employee WITH TABLE KEY pernr = 1 INTO gs_employee2. "table key is for primary key!
+
+READ TABLE gt_employee WITH Key name = 'Meier' INTO gs_employee.
+
+CLEAR: gs_employee, gs_employee2.
+
+LOOP AT gt_employee INTO gs_employee. "WHERE pernr = 1 AND name = 'Peter'. " sequentially runs through the table
+
+ULINE.
+WRITE: /'Table data 1' , gs_employee-pernr, gs_employee-firstname, gs_employee-name, gs_employee-age.
+
+ENDLOOP.
+
+READ TABLE gt_employee INDEX 3 INTO gs_employee.
+
+MODIFY gt_employee FROM gs_employee INDEX 2.
+
+LOOP AT gt_employee INTO gs_employee. "WHERE pernr = 1 AND name = 'Peter'. " sequentially runs through the table
+
+ULINE.
+WRITE: /'Table data updated' , gs_employee-pernr, gs_employee-firstname, gs_employee-name, gs_employee-age.
+
+ENDLOOP.
+
+**********************************************************************
+***Delete Datasets
+**********************************************************************
+
+DELETE TABLE gt_employee FROM gs_employee.
+
+IF sy-subrc <> 0.
+  WRITE 'deletion did not work'.
+
+ENDIF.
+
+
+LOOP AT gt_employee INTO gs_employee. "WHERE pernr = 1 AND name = 'Peter'. " sequentially runs through the table
+
+ULINE.
+WRITE: /'Table data deleted' , gs_employee-pernr, gs_employee-firstname, gs_employee-name, gs_employee-age.
+
+ENDLOOP.
+
+**********************************************************************
+***Multiple Datasets
+**********************************************************************
+
+APPEND LINES OF gt_employee TO gt_employee2.
+INSERT LINES OF gt_employee INTO TABLE gt_employee2 INDEX 1.
+
+
+
+
+LOOP AT gt_employee2 INTO gs_employee. "WHERE pernr = 1 AND name = 'Peter'. " sequentially runs through the table
+
+ULINE.
+WRITE: /'Table employee 2' , gs_employee-pernr, gs_employee-firstname, gs_employee-name, gs_employee-age.
+
+ENDLOOP.

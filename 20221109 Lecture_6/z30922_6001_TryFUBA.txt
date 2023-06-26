@@ -1,0 +1,42 @@
+*&---------------------------------------------------------------------*
+*& Report Z30922_6001_TRYFUBA
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT z30922_6001_fuba.
+
+DATA gv_result TYPE P.
+
+CALL FUNCTION 'Z309226001FM_FUB'
+  EXPORTING
+    iv_number1 = 1
+    iv_number2 = 2
+  IMPORTING
+    ev_result  = gv_result.
+
+WRITE: /, 'The function module returns:', gv_result.
+
+
+***This is the code in the Function Module:
+
+FUNCTION Z309226001FM_FUB .
+*"----------------------------------------------------------------------
+*"*"Local Interface:
+*"  IMPORTING
+*"     VALUE(IV_NUMBER1) TYPE  P
+*"     VALUE(IV_NUMBER2) TYPE  P
+*"  EXPORTING
+*"     VALUE(EV_RESULT) TYPE  P
+*"  EXCEPTIONS
+*"      PROBLEM
+*"----------------------------------------------------------------------
+
+  IF iv_number1 IS INITIAL OR iv_number2 IS INITIAL.
+    RAISE Problem.
+  ELSE.
+    ev_result = iv_number1 + iv_number1.
+
+    ENDIF.
+
+
+ENDFUNCTION.

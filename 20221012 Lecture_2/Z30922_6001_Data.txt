@@ -1,0 +1,38 @@
+*&---------------------------------------------------------------------*
+*& Report Z30922_6001_DATA
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT z30922_6001_data.
+
+**********************************************************************
+***Type Definition for a structure
+**********************************************************************
+
+TYPES: BEGIN OF gty_student,
+         matnr(8) TYPE c,
+         name(40) TYPE c,
+         surname  TYPE string,
+         age      TYPE i,
+       END OF gty_student.
+
+
+* ***********************************************************************
+*  **Data Declaration
+*  *********************************************************************
+
+DATA gs_student TYPE gty_student." this is now our structure variable
+
+**Parameters allow you to get user input from the screen
+**Using text elements you can modify the field names on the screen
+PARAMETERS: p_matnr   LENGTH 8,
+            p_name    LENGTH 12,
+            p_age     LENGTH 3.
+
+
+
+gs_student-matnr = p_matnr.
+gs_student-name = p_name.
+gs_student-age = p_age.
+
+WRITE: /, gs_student-matnr, gs_student-name, gs_student-age.

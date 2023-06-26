@@ -1,0 +1,39 @@
+*&---------------------------------------------------------------------*
+*& Report Z30922_6001_PRACT43
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT Z30922_6001_PRACT43.
+
+DATA: wa_sflight TYPE sflight,
+      wa_spfli TYPE spfli,
+      gv_seatsFree TYPE i,
+      gv_seatOcc TYPE p DECIMALS 2.
+
+
+WRITE: /, 1 'FROM', 21 'To', 61 'Date', 74 'Occupied', 89 'Free'.
+
+SELECT * FROM spfli INTO wa_spfli.
+
+  WRITE: 'Flight Connections'.
+  ULINE.
+
+  WRITE: /, 1 wa_spfli-cityfrom, 21 wa_spfli-cityto.
+
+  SELECT * FROM sflight INTO wa_sflight WHERE carrid = wa_spfli-carrid AND connid = wa_spfli-connid.
+
+    gv_seatsFree = wa_sflight-seatsmax - wa_sflight-seatsocc.
+    gv_seatOcc = ( wa_sflight-seatsocc / wa_sflight-seatsmax ) * 100.
+
+    IF ( gv_seatOcc > 90 ).
+
+     WRITE: /, 61 wa_sflight-fldate COLOR COL_NEGATIVE, 74 wa_sflight-seatsocc, 89 |{ wa_sflight-seatsmax - wa_sflight-seatsocc }|.
+
+    ENDIF.
+
+    WRITE: /, 61 wa_sflight-fldate, 74 wa_sflight-seatsocc, 89 |{ wa_sflight-seatsmax - wa_sflight-seatsocc }|.
+
+    ENDSELECT.
+
+
+  ENDSELECT.
