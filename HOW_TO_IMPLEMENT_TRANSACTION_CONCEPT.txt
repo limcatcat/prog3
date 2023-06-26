@@ -1,0 +1,4 @@
+How to implement the transaction concept in SAP programs:
+(1) Go to the Function Module you want to use, go to Attributes tab and change it to 'Update Module' in Processing Type
+(2) Go to the Include of a Dynpro program which uses that FM and in the CALL FUNCTION block, add 'IN UPDATE TASK' after the name of the FM (in the example, this is in WHEN 'SET' in the CASE block)
+(3) Also add 'COMMIT WORK.' for a different WHEN in the CASE block (in the example, it's WHEN 'SAVE')
